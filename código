@@ -1,10 +1,15 @@
+install.packages("dplyr")
 install.packages("ggplot2")
-
-# Carregar o pacote necessário para manipulação de gráficos
+install.packages("RColorBrewer")
+library(dplyr)
 library(ggplot2)
+library(RColorBrewer)
 
 # Ler a base de dados do arquivo CSV
 dados <- read.csv("vgsales.csv")
+
+# Definindo as Variáveis como Númericas
+dados$Year <- as.numeric(dados$Year)
 
 # Exibir as primeiras linhas da base de dados
 head(dados)
@@ -12,7 +17,7 @@ head(dados)
 # Ordenar os valores em ordem decrescente e selecionar os 5 maiores
 dados_ordenados <- head(dados[order(dados$NA_Sales, decreasing = TRUE), ], 5)
 
-# Gráfico de barras
+# Gráfico de barras de jogos mais vendidos na América do Norte
 
 ggplot(dados_ordenados, aes(x = Name, y = NA_Sales)) +
   geom_bar(stat = "identity", fill = "purple") +
@@ -21,11 +26,62 @@ ggplot(dados_ordenados, aes(x = Name, y = NA_Sales)) +
   theme_minimal()
 
 # Ordenar os valores em ordem decrescente e selecionar os 10 maiores
-dados_ordenados2 <- head(dados[order(dados$Global_Sales., decreasing = TRUE), ], 10)
+dados_ordenados2 <- head(dados[order(dados$Global_Sales., decreasing = TRUE), ], 6)
 
-# Gráfico de barras
+# Gráfico de barras de Gêneros mais vendidos
 
-ggplot(dados_ordenados2, aes(x = Year, y = Global_Sales.)) +
+ggplot(dados_ordenados2, aes(x = Genre, y = Global_Sales.)) +
   geom_bar(stat = "identity", fill = "darkblue") +
-  labs(x = "Anos", y = "Vendas Mundiais", title = "Anos que mais venderam jogos") +
+  labs(x = "Gêneros", y = "Vendas Mundiais", title = "Gêneros que mais venderam jogos") +
   theme_minimal()
+
+# Organizando dados para o gráfico
+dados_ordenados3 <- head(dados[order(dados$Platform, decreasing = TRUE), ], 10000)
+platform_counts <- table(dados_ordenados3$Platform)
+platform_df <- data.frame(Platform = names(platform_counts), Count = as.numeric(platform_counts))
+platform_df <- platform_df[order(platform_df$Count, decreasing = TRUE), ]
+platform_df$Platform <- factor(platform_df$Platform, levels = platform_df$Platform[order(platform_df$Count, decreasing = TRUE)])
+
+# Gráfico de Barras de número de jogos por plataforma
+ggplot(data = platform_df, aes(x = Platform, y = Count)) +
+  geom_bar(stat = "identity", fill = "darkred") +
+  geom_text(aes(label = Count), vjust = -0.5, size = 3.5) +  # Adicionar os valores exatos
+  labs(title = "Jogos por Plataforma",
+       x = "Plataforma",
+       y = "Contagem") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Organizando dados para o gráfico
+dados_ordenados4 <- head(dados[order(dados$Name, decreasing = TRUE), ], 100)
+publisher_counts <- table(dados_ordenados4$Publisher)
+publisher_df <- data.frame(Publisher = names(publisher_counts), Count = as.numeric(publisher_counts))
+publisher_df <- publisher_df[order(publisher_df$Count, decreasing = TRUE), ]
+
+# Criando gráfico de barras de número de jogos por desenvolvedora
+ggplot(data = publisher_df, aes(x = Publisher, y = Count, fill = Publisher)) +
+  geom_bar(stat = "identity", fill = "brown") +
+  geom_text(aes(label = Count), vjust = -0.5, size = 3.5) +  # Adicionar os valores exatos
+  labs(title = "Jogos por Desenvolvedora",
+       x = "Desenvolvedora",
+       y = "Número de Jogos") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
+
+# Organizando dados para o gráfico
+genre_counts <- table(dados$Genre)
+genre_data <- data.frame(Genre = names(genre_counts), Count = as.numeric(genre_counts))
+
+# Criando gráfico de barras de número de de jogos por gênero
+ggplot(genre_data, aes(x = Genre, y = Count)) +
+  geom_bar(stat = "identity", fill = "black") +
+  geom_text(aes(label = Count), vjust = -0.5, size = 3.5) +  # Adicionar os valores exatos
+  labs(title = "Número de Jogos por Gênero",
+       x = "Gênero",
+       y = "Número de Jogos") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1))
