@@ -1,9 +1,7 @@
 install.packages("dplyr")
 install.packages("ggplot2")
-install.packages("RColorBrewer")
 library(dplyr)
 library(ggplot2)
-library(RColorBrewer)
 
 # Ler a base de dados do arquivo CSV
 dados <- read.csv("vgsales.csv")
