@@ -1,0 +1,31 @@
+install.packages("ggplot2")
+
+# Carregar o pacote necessário para manipulação de gráficos
+library(ggplot2)
+
+# Ler a base de dados do arquivo CSV
+dados <- read.csv("vgsales.csv")
+
+# Exibir as primeiras linhas da base de dados
+head(dados)
+
+# Ordenar os valores em ordem decrescente e selecionar os 5 maiores
+dados_ordenados <- head(dados[order(dados$NA_Sales, decreasing = TRUE), ], 5)
+
+# Gráfico de barras
+
+ggplot(dados_ordenados, aes(x = Name, y = NA_Sales)) +
+  geom_bar(stat = "identity", fill = "purple") +
+  geom_text(aes(label = NA_Sales), vjust = -0.5, size = 3.5) +  # Adicionar os valores exatos
+  labs(x = "Jogos", y = "Vendas América do Norte", title = "Jogos mais vendidos") +
+  theme_minimal()
+
+# Ordenar os valores em ordem decrescente e selecionar os 10 maiores
+dados_ordenados2 <- head(dados[order(dados$Global_Sales., decreasing = TRUE), ], 10)
+
+# Gráfico de barras
+
+ggplot(dados_ordenados2, aes(x = Year, y = Global_Sales.)) +
+  geom_bar(stat = "identity", fill = "darkblue") +
+  labs(x = "Anos", y = "Vendas Mundiais", title = "Anos que mais venderam jogos") +
+  theme_minimal()
